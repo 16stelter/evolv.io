@@ -55,7 +55,9 @@ public class Board {
 	private final int[] fileSaveCounts;
 	private final double[] fileSaveTimes;
 	private double imageSaveInterval = 1;
-	private double textSaveInterval = 1;
+	private boolean enableImageSave = true;
+	private double textSaveInterval = 0;
+	private boolean enableTextSave = false;
 
 	// Misc or Unsorted
 	private final int backgroundColor;
@@ -612,9 +614,10 @@ public class Board {
 		for (int i = 0; i < 4; i++) {
 			if (fileSaveTimes[i] < -99999) {
 				fileSaveTimes[i] = year;
-				if (i < 2) {
+				if (i < 2 && enableImageSave) {
 					this.evolvioColor.saveFrame(getNextFileName(i));
-				} else {
+				} else if (enableTextSave) {
+					
 					String[] data = this.toBigString();
 					this.evolvioColor.saveStrings(getNextFileName(i), data);
 				}
@@ -673,25 +676,49 @@ public class Board {
 	}
 
 	public void increaseTextSaveInterval() {
-		this.textSaveInterval *= 2;
-		if (textSaveInterval >= 0.7f) {
-			textSaveInterval = Math.round(textSaveInterval);
+		if (enableTextSave == false) {
+			enableTextSave = true;
+			textSaveInterval = 0.125;
+		}
+		else { 
+			this.textSaveInterval *= 2;
+			if (textSaveInterval >= 0.7f) {
+				textSaveInterval = Math.round(textSaveInterval);
+			}
 		}
 	}
 
 	public void decreaseTextSaveInterval() {
-		this.textSaveInterval /= 2;
+		if (this.textSaveInterval <= 0.125) {
+			enableTextSave = false;
+			this.textSaveInterval = 0;
+		}
+		else {
+			this.textSaveInterval /= 2;
+		}
 	}
 
 	public void increaseImageSaveInterval() {
-		this.imageSaveInterval *= 2;
-		if (imageSaveInterval >= 0.7f) {
-			imageSaveInterval = Math.round(imageSaveInterval);
+		if (enableImageSave == false) {
+			enableImageSave = true;
+			imageSaveInterval = 0.125;
+		}
+		else {
+			this.imageSaveInterval *= 2;
+			if (imageSaveInterval >= 0.7f) {
+				imageSaveInterval = Math.round(imageSaveInterval);
+			}
 		}
 	}
 
 	public void decreaseImageSaveInterval() {
-		this.imageSaveInterval /= 2;
+		if (this.imageSaveInterval <= 0.125) {
+			enableImageSave = false;
+			this.imageSaveInterval = 0;
+		}
+		else {
+			this.imageSaveInterval /= 2;
+		}
 	}
 
 	public void increasePlaySpeed() {
